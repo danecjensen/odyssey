@@ -63,13 +63,13 @@ angular.module('odyssey.controllers', []).
       //$scope.markers.push({latitude: $model.data.location.lat, longitude: $model.data.location.lng});
     }
   })
-  .controller('HomeCtrl', function($scope, $http) {
+  .controller('HomeCtrl', function($scope, $http, $log) {
+  	  $scope.predictions = [];
 	  $scope.cities = function(cityName) {
-	  	var url = "http://api.geonames.org/searchJSON?maxRows=10&username=danejensen&continentCode=NA&name=" + cityName;
-	  	$http({method: 'GET', url: url}).
-	    success(function(data, status, headers, config) {
-	    	return data
-	    }).
-	    error(function(data, status, headers, config) {});
+	    return $http.jsonp("https://maps.googleapis.com/maps/api/place/autocomplete/json?callback=JSON_CALLBACK&types=geocode&sensor=false&key=AIzaSyC_QuDSF0MCAbzsMeGuhbnDdpntOpzKIkM&input="+cityName).success(function(response){
+	      console.log(response);
+	      $log.log(response);
+	      $scope.predictions = response.predictions
+	    });
 	  };
   });
