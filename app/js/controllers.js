@@ -3,9 +3,10 @@
 /* Controllers */
 
 angular.module('odyssey.controllers', []).
-  controller('SearchCtrl', function($scope, $http, foursquareResource) {
+  controller('SearchCtrl', function($scope, $http, foursquareResource, currentCity) {
   	delete $http.defaults.headers.common["X-Requested-With"];
   	$scope.destinations = [];
+  	$scope.current_city = currentCity.getProperty();
   // 	$scope.getSuggestions = function(){
   // 		var opts = {
   // 			'query': $scope.placeQuery,
@@ -23,10 +24,10 @@ angular.module('odyssey.controllers', []).
         'url' : 'https://api.foursquare.com/v2/venues/suggestCompletion?',
         'client_id'     : 'AAUXORIZZ1CNKYBDNXUINODGQT24W2XO3IQAFIZ04Y0YBWVQ',
         'client_secret' : 'L0KWGXINDGXNCHLBPQKDBVY4QPARCWZLTSKJPBMV11ICADCX',
-        'll' : '40.7,-74.0', 
+        'll' : $scope.current_city.location.lat + ',' + $scope.current_city.location.lng, 
         'limit' : 10,
         'v' : '20130715',
-        'style_results': true 
+        //'style_results': true 
       }
 
       var url = opts.url 
@@ -37,15 +38,21 @@ angular.module('odyssey.controllers', []).
         + "&client_id=" + opts.client_id
         + "&client_secret=" + opts.client_secret;
 
+      
+
       $http({method: 'GET', url: url}).
         success(function(data, status, headers, config) {
           $scope.suggestions = [];
-          var minivenues = data.response.minivenues;
-          for (var i = 0; i < minivenues.length; i++) {
-            var v = minivenues[i] 
-            var s = {data: v, label: v.name + " " + v.location.address + " " + v.location.city + ", " + v.location.state}
-            $scope.suggestions.push(s);
-          }
+          $scope.suggestions = data.response.minivenues;
+
+          // var minivenues = data.response.minivenues;
+
+          // for (var i = 0; i < minivenues.length; i++) {
+          //   var v = minivenues[i] 
+          //   var s = {data: v, label: v.name + " " + v.location.address + " " + v.location.city + ", " + v.location.state}
+          //   $scope.suggestions.push(s);
+          // }
+          console.log($scope.suggestions);
         }).
         error(function(data, status, headers, config) {});
 
@@ -53,9 +60,9 @@ angular.module('odyssey.controllers', []).
     }
 
     $scope.onSelect = function($item, $model, $label){
-      var d = angular.extend({'name': $model.data.name, 'photo_url': ''}, $model.data.location);
+      var d = angular.extend({'name': $model.name, 'photo_url': ''}, $model.location);
       $scope.destinations.unshift(d);
-      var photo = foursquareResource.get({'venueId': $model.data.id}, function(){
+      var photo = foursquareResource.get({'venueId': $model.id}, function(){
     	var photo_url = photo.response.photos.items[0].prefix + "200x200" + photo.response.photos.items[0].suffix;
     	$scope.destinations[0].photo_url = photo_url;
       });
@@ -63,13 +70,7 @@ angular.module('odyssey.controllers', []).
       //$scope.markers.push({latitude: $model.data.location.lat, longitude: $model.data.location.lng});
     }
   })
-  .controller('HomeCtrl', function($scope, $http, $log) {
-  	  $scope.predictions = [];
-	  $scope.cities = function(cityName) {
-	    return $http.jsonp("https://maps.googleapis.com/maps/api/place/autocomplete/json?callback=JSON_CALLBACK&types=geocode&sensor=false&key=AIzaSyC_QuDSF0MCAbzsMeGuhbnDdpntOpzKIkM&input="+cityName).success(function(response){
-	      console.log(response);
-	      $log.log(response);
-	      $scope.predictions = response.predictions
-	    });
-	  };
+  .controller('HomeCtrl', function($scope, $http) {
+  	  $scope.gPlace;
+	  $scope.current_city;
   });

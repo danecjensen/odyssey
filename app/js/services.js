@@ -29,4 +29,23 @@ angular.module('odyssey.services', ['ngResource'],
 			        }
 			    });
         });
-    }).value('version', '0.1');
+    }).value('version', '0.1')
+	.service('currentCity', function () {
+        var current_city = {
+        	name: "",
+        	formatted_address: "",
+        	location: {
+        		lat: "",
+        		lng: ""
+        	}
+        }
+
+        return {
+            getProperty: function () {
+                return current_city;
+            },
+            setProperty: function(value) {
+                current_city = value;
+            }
+        };
+    });

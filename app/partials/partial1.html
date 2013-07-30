@@ -1,5 +1,5 @@
 	<div ng-controller="SearchCtrl">
-        <input type="text" ng-model="placeQuery" placeholder="Add a destination" typeahead-on-select='onSelect($item, $model, $label)' typeahead="suggestion as suggestion.label for suggestion in getSuggestions()">
+        <input type="text" class="form-control" ng-model="placeQuery" placeholder="Add a destination" typeahead-on-select='onSelect($item, $model, $label)' typeahead="suggestion as suggestion.name for suggestion in getSuggestions()">
 
 
         <div class="row">
