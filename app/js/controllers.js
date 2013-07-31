@@ -63,7 +63,7 @@ angular.module('odyssey.controllers', []).
       var d = angular.extend({'name': $model.name, 'photo_url': ''}, $model.location);
       $scope.destinations.unshift(d);
       var photo = foursquareResource.get({'venueId': $model.id}, function(){
-    	var photo_url = photo.response.photos.items[0].prefix + "200x200" + photo.response.photos.items[0].suffix;
+    	var photo_url = photo.response.photos.items[0].prefix + "300x200" + photo.response.photos.items[0].suffix;
     	$scope.destinations[0].photo_url = photo_url;
       });
       
